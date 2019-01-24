@@ -16,19 +16,18 @@ oc_platform_view:
         id: \d+
 
 oc_platform_add:
-    path:      /add
+    path:      platform/add
     defaults:
-        _controller: OCPlatformBundle:Advert:add
 
 oc_platform_edit:
-    path:      /edit/{id}
+    path:      platform/edit/{id}
     defaults:
         _controller: OCPlatformBundle:Advert:edit
     requirements:
         id: \d+
 
 oc_platform_delete:
-    path:      /delete/{id}
+    path:      platform/delete/{id}
     defaults:
         _controller: OCPlatformBundle:Advert:delete
     requirements:

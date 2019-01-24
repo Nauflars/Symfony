@@ -108,23 +108,19 @@ class AdvertController extends Controller
     }
 
     public function editAction($id, Request $request)
-    {
-        // Ici, on récupérera l'annonce correspondante à $id
-
-        // Même mécanisme que pour l'ajout
-        if ($request->isMethod('POST')) {
-            $request->getSession()
-                ->getFlashBag()
-                ->add('notice', 'Annonce bien modifiée.');
-
-            return $this->redirectToRoute('oc_platform_view', array(
-                'id' => 5
-            ));
-        }
-
-        return $this->render('OCPlatformBundle:Advert:edit.html.twig');
+    {      
+        $advert = array(
+            'title'   => 'Recherche développpeur Symfony',
+            'id'      => $id,
+            'author'  => 'Alexandre',
+            'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
+            'date'    => new \Datetime()
+        );
+        
+        return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
+            'advert' => $advert
+        ));
     }
-
     public function deleteAction($id)
     {
         // Ici, on récupérera l'annonce correspondant à $id
