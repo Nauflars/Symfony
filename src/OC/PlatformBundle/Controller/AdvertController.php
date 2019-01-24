@@ -3,39 +3,15 @@
 // src/OC/PlatformBundle/Controller/AdvertController.php
 namespace OC\PlatformBundle\Controller;
 
-namespace OC\PlatformBundle\DependencyInjection\OCPlatformExtension;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdvertController extends Controller
 {
 
-    public function menuAction()
-    {
-        // On fixe en dur une liste ici, bien entendu par la suite
-        // on la récupérera depuis la BDD !
-        $listAdverts = array(
-            array(
-                'id' => 2,
-                'title' => 'Recherche développeur Symfony'
-            ),
-            array(
-                'id' => 5,
-                'title' => 'Mission de webmaster'
-            ),
-            array(
-                'id' => 9,
-                'title' => 'Offre de stage webdesigner'
-            )
-        );
-
-        return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
-
-            'listAdverts' => $listAdverts
-        ));
-    }
-
+    
     public function indexAction($page)
     {
         // Notre liste d'annonce en dur
@@ -62,8 +38,34 @@ class AdvertController extends Controller
                 'date' => new \Datetime()
             )
         );
-
+        
         return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
+            'listAdverts' => $listAdverts
+        ));
+    }
+    
+    
+    public function menuAction()
+    {
+        // On fixe en dur une liste ici, bien entendu par la suite
+        // on la récupérera depuis la BDD !
+        $listAdverts = array(
+            array(
+                'id' => 2,
+                'title' => 'Recherche développeur Symfony'
+            ),
+            array(
+                'id' => 5,
+                'title' => 'Mission de webmaster'
+            ),
+            array(
+                'id' => 9,
+                'title' => 'Offre de stage webdesigner'
+            )
+        );
+
+        return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
+
             'listAdverts' => $listAdverts
         ));
     }
