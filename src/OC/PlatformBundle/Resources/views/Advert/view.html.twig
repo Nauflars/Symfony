@@ -18,6 +18,33 @@ Lecture d'une annonce -
 	{{ advert.content }}
 </div>
 
+{% if advert.image is not null %}
+  <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+{% endif %}
+
+{% for Application in listApplications %}
+	<li>
+	par {{ Application.author }}, le contenue: {{ Application.content }}</li>
+	{% endfor %}
+
+{% if not advert.categories.empty %}
+  <p>
+    Cette annonce est parue dans les catégories suivantes :
+    {% for category in advert.categories %}
+      {{ category.name }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+{% endif %}
+
+
+  <p>
+  	les skills de cet advert sont les suivantes :
+    {% for Skill in listSkills %}
+      {{ Skill.skill.name }} / {{ Skill.level }}   {% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+
+
 <p>
 	<a href="{{ path('oc_platform_home') }}" class="btn btn-default"> <i
 		class="glyphicon glyphicon-chevron-left"></i> Retour à la liste
