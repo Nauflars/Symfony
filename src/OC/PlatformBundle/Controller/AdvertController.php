@@ -2,7 +2,7 @@
 
 // src/OC/PlatformBundle/Controller/AdvertController.php
 namespace OC\PlatformBundle\Controller;
-
+use OC\PlatformBundle\Entity\Advert;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,13 +14,14 @@ class AdvertController extends Controller
     
     public function indexAction($page)
     {
+        $mailer = $this->container->get('mailer'); 
         // Notre liste d'annonce en dur
         $listAdverts = array(
             array(
-                'title' => 'Recherche développpeur Symfony',
+                'title' => 'Recherche dï¿½velopppeur Symfony',
                 'id' => 1,
                 'author' => 'Alexandre',
-                'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon Blabl',
+                'content' => 'Nous recherchons un dï¿½veloppeur Symfony dï¿½butant sur Lyon Blabl',
                 'date' => new \Datetime()
             ),
             array(
@@ -48,11 +49,11 @@ class AdvertController extends Controller
     public function menuAction()
     {
         // On fixe en dur une liste ici, bien entendu par la suite
-        // on la récupérera depuis la BDD !
+        // on la rï¿½cupï¿½rera depuis la BDD !
         $listAdverts = array(
             array(
                 'id' => 2,
-                'title' => 'Recherche développeur Symfony'
+                'title' => 'Recherche dï¿½veloppeur Symfony'
             ),
             array(
                 'id' => 5,
@@ -72,48 +73,68 @@ class AdvertController extends Controller
 
     public function viewAction($id)
     {
-        $advert = array(
-            'title' => 'Recherche développpeur Symfony2',
-            'id' => $id,
-            'author' => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon Blabl',
-            'date' => new \Datetime()
-        );
-
+        // On rÃ©cupÃ¨re le repository
+        $repository = $this->getDoctrine()
+        ->getManager()
+        ->getRepository('OCPlatformBundle:Advert')
+        ;
+        
+        // On rÃ©cupÃ¨re l'entitÃ© correspondante Ã  l'id $id
+        $advert = $repository->find($id);
+        
+        // $advert est donc une instance de OC\PlatformBundle\Entity\Advert
+        // ou null si l'id $id  n'existe pas, d'oÃ¹ ce if :
+        if (null === $advert) {
+            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+        }
+        
+        // Le render ne change pas, on passait avant un tableau, maintenant un objet
         return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
             'advert' => $advert
         ));
     }
+    
 
     public function addAction(Request $request)
     {
-        // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
-
-        // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
+        // Crï¿½ation de l'entitï¿½
+        $advert = new Advert();
+        $advert->setTitle('Recherche dveloppeur Symfony.');
+        $advert->setAuthor('Alexandre');
+        $advert->setContent("Nous recherchons un dveloppeur Symfony dbutant sur Lyon. Blabla");
+        $advert->setDate(new \Datetime());
+        // On peut ne pas dï¿½finir ni la date ni la publication,
+        // car ces attributs sont dï¿½finis automatiquement dans le constructeur
+        
+        // On rï¿½cupï¿½re l'EntityManager
+        $em = $this->getDoctrine()->getManager();
+        
+        // ï¿½tape 1 : On ï¿½ persiste ï¿½ l'entitï¿½
+        $em->persist($advert);
+        
+        // ï¿½tape 2 : On ï¿½ flush ï¿½ tout ce qui a ï¿½tï¿½ persistï¿½ avant
+        $em->flush();
+        
+        // Reste de la mï¿½thode qu'on avait dï¿½jï¿½ ï¿½crit
         if ($request->isMethod('POST')) {
-            // Ici, on s'occupera de la création et de la gestion du formulaire
-
-            $request->getSession()
-                ->getFlashBag()
-                ->add('notice', 'Annonce bien enregistrée.');
-
+            $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrï¿½e.');
+            
             // Puis on redirige vers la page de visualisation de cettte annonce
-            return $this->redirectToRoute('oc_platform_view', array(
-                'id' => 5
-            ));
+            return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
         }
-
+        
         // Si on n'est pas en POST, alors on affiche le formulaire
-        return $this->render('OCPlatformBundle:Advert:add.html.twig');
+        return $this->render('OCPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
     }
+    
 
     public function editAction($id, Request $request)
     {      
         $advert = array(
-            'title'   => 'Recherche développpeur Symfony',
+            'title'   => 'Recherche dï¿½velopppeur Symfony',
             'id'      => $id,
             'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
+            'content' => 'Nous recherchons un dï¿½veloppeur Symfony dï¿½butant sur Lyon. Blablaï¿½',
             'date'    => new \Datetime()
         );
         
@@ -123,9 +144,9 @@ class AdvertController extends Controller
     }
     public function deleteAction($id)
     {
-        // Ici, on récupérera l'annonce correspondant à $id
+        // Ici, on rï¿½cupï¿½rera l'annonce correspondant ï¿½ $id
 
-        // Ici, on gérera la suppression de l'annonce en question
+        // Ici, on gï¿½rera la suppression de l'annonce en question
         return $this->render('OCPlatformBundle:Advert:delete.html.twig');
     }
 }
